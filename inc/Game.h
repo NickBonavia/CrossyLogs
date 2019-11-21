@@ -15,11 +15,14 @@
 class Game {
 
     private:
+    void LoadContent();
+    void UnloadContent();
+    
+    // Add member variables here
     SDL_Window *window;
     SDL_Renderer *renderer;
     bool running;
-    void LoadContent();
-    void UnloadContent();
+
     
     public:
     Game(int winWidth = 800, int winHeight = 400);
