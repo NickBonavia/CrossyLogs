@@ -16,7 +16,7 @@ This project depends on the SDL2 library for window creation, user I/O, and 2D g
 sudo apt install libsdl2-dev libsdl2-image-dev
 ```
 
-Once the dependency is installed change to the CrossyLogs directory and issue make to build, and then run the program
+Once the dependencies are installed change to the CrossyLogs directory and issue make to build, and then run the program
 
 ```bash
 make
