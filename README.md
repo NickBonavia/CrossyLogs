@@ -1,9 +1,9 @@
 # CrossyLogs: The Game
 
 ## Contributors
-+ Nick Bonavia
-+ Geordie Jones
-+ Warren Riley
++ [Nick Bonavia](https://github.com/NickBonavia)
++ [Geordie Jones](https://github.com/geoRunstar)
++ [Warren Riley](https://github.com/warrenriley98)
 
 ## What's this project?
 This project is a parallel implementation of a 2D arcade game, where the player attempts to cross a river by way of logs flowing in a dangerous river. The purpose of this project is to research and analyze the performance increase from parallelizing the game.
