@@ -6,7 +6,7 @@
 + [Warren Riley](https://github.com/warrenriley98)
 
 ## What's this project?
-This project is a parallel implementation of a 2D arcade game, where the player attempts to cross a river by way of logs flowing in a dangerous river. The purpose of this project is to research and analyze the performance increase from parallelizing the game.
+This project is a parallel implementation of a 2D arcade game, where the player attempts to cross a dangerous river by way of floating logs. The purpose of this project is to research and analyze the performance increase from parallelizing the game.
 
 ## How to compile
 
