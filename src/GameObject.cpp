@@ -1,7 +1,7 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 
-GameObject::GameObject(const char* tecture_sheet, SDL_Renderer* render, int x, int y)
+GameObject::GameObject(const char* texture_sheet, SDL_Renderer* render, int x, int y)
 {
 	renderer = render;
 	object_texture = TextureManager::LoadTexture(texture_sheet,render);
