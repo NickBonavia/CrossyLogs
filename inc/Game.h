@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 /*
 *   Game class
@@ -15,6 +16,7 @@
 class Game {
 
     private:
+	    static SDL_Texture* LoadTexture(const char* file_name, SDL_Renderer* render);
     void LoadContent();
     void UnloadContent();
     

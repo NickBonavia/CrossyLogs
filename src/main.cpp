@@ -12,13 +12,13 @@
 int main(int argc, char* argv[]) {
 
     Game crossyLogs = Game();
-    double delta = 0.0;
-
+    Uint32 delta = SDL_GetTicks();
+	
     while (crossyLogs.getStatus() == true) {
         
-        delta = omp_get_wtime() - delta;
-        crossyLogs.Update(delta);
-        crossyLogs.Draw(delta);
+        delta = SDL_GetTicks() - delta;
+        crossyLogs.Update(delta/1000.0);
+        crossyLogs.Draw(delta/1000.0);
 
         // Delay 10ms as not to use 100% CPU
         SDL_Delay(10);

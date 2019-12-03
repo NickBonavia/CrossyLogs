@@ -1,14 +1,38 @@
 #include "Game.h"
+#include "Log.h"
 #include <iostream>
 #include <string>
 using std::cout;
 using std::endl;
 
+
+Log* log_obj;
+//SDL_Texture* frog_text;
+SDL_Texture* log_text;
+SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
+{
+	SDL_Surface* temp_surface = IMG_Load(file_name);
+	SDL_Texture* texture =SDL_CreateTextureFromSurface(render, temp_surface);
+	SDL_FreeSurface(temp_surface);
+
+	return texture;
+}
+
 void Game::LoadContent() {
     // To-do: Load content for game
+  
+    log_text = LoadTexture("assets/log.png",this->renderer);
+
+    //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
+    log_obj = new Log(log_text,this->renderer,100,100);
+    log_obj->setSpeed(2);
+    log_obj->setDirection(1);
+    //Frog = new GameObject(frog_text,this.renderer, 100,50);
+
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
+    log_obj->Update(delta);
 
     SDL_Event event;
 
@@ -25,10 +49,10 @@ void Game::Update(double delta) {
 }
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
-
     // Test: draws a purple background
     SDL_SetRenderDrawColor(renderer, 150, 0, 255, 255);
     SDL_RenderClear(renderer);
+    log_obj->Render();
     SDL_RenderPresent(renderer);
 }
 void Game::UnloadContent() {
