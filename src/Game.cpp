@@ -7,6 +7,8 @@ using std::endl;
 
 
 Log* log_obj[4][4];
+SDL_Rect Eground;//Ending ground
+SDL_Rect Sground;//Starting ground
 //SDL_Texture* frog_text;
 SDL_Texture* log_text;
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
@@ -25,30 +27,42 @@ void Game::LoadContent() {
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
 	for(int i = 0;i<4; i++){
-	for(int j =0; j<4;j++){
-int x=(j*64)+(i*64)+(j*100);
-int d;
-int y = (i * 64)+64;
-if(i%2==0){
-d = 1;
-}
-else{
-d= -1;
-}
-    log_obj[i][j] = new Log(log_text,this->renderer,x,y);
-    log_obj[i][j]->setSpeed(1);
-  log_obj[i][j]->setDirection(d);
-}
-}
+		for(int j =0; j<4;j++){
+			int x=(j*64)+(i*64)+(j*100);
+			int d;
+			int y = (i * 64)+64;
+			if(i%2==0){
+				d = 1;
+			}
+			else{
+				d= -1;
+			}
+    	log_obj[i][j] = new Log(log_text,this->renderer,x,y);
+    	log_obj[i][j]->setSpeed(1);
+  		log_obj[i][j]->setDirection(d);
+		}
+	}
+
+	//Loading the ground objects and their postions
+	Sground.x = 0;
+	Sground.y = 350;
+	Sground.w = 800;
+	Sground.h = 50;
+
+	Eground.x = 0;
+	Eground.y = 0;
+	Eground.w = 800;
+	Eground.h = 50;
     //Frog = new GameObject(frog_text,this.renderer, 100,50);
 
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
-for(int i =0;i<4;i++){
-for(int j =0; j<4;j++){
-    log_obj[i][j]->Update(delta);
-}}
+	for(int i =0;i<4;i++){
+		for(int j =0; j<4;j++){
+	    	log_obj[i][j]->Update(delta);
+		}
+	}
     SDL_Event event;
 
     // get events
@@ -65,12 +79,18 @@ for(int j =0; j<4;j++){
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
     // Test: draws a purple background
-    SDL_SetRenderDrawColor(renderer, 150, 0, 255, 255);
-    SDL_RenderClear(renderer);
-for(int i =0;i<4;i++){
-for(int j =0;j<4;j++){
-    log_obj[i][j]->Render();
-}}
+
+	SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
+	SDL_RenderFillRect(renderer, &Sground);
+	SDL_RenderFillRect(renderer, &Eground);
+    
+	for(int i =0;i<4;i++){
+		for(int j =0;j<4;j++){
+    		log_obj[i][j]->Render();
+		}
+	}
+	SDL_SetRenderDrawColor(renderer, 0, 0, 205, 0);
     SDL_RenderPresent(renderer);
 }
 void Game::UnloadContent() {
