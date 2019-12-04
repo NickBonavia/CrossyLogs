@@ -19,10 +19,20 @@ public:
 	destination_rect.y = y_position;
 	};
 	void Update(double delta){
-	x_position +=speed * direction;
+	x_position += speed * direction;
 	
 	source_rect.x =0;
 	source_rect.y =0;
+
+	if(direction > 0){
+		if(x_position > 800){
+			x_position = -100;
+		}
+	}else{
+		if(x_position < -100){
+			x_position = 800;
+		}
+	}
 
 	destination_rect.x = int(x_position);
 	destination_rect.y = y_position;
