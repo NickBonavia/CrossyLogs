@@ -9,6 +9,7 @@ using std::endl;
 Log* log_obj[5][5];
 SDL_Rect Eground;//Ending ground
 SDL_Rect Sground;//Starting ground
+SDL_Rect dest;
 //SDL_Texture* frog_text;
 SDL_Texture* log_text;
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
@@ -28,16 +29,18 @@ void Game::LoadContent() {
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
 	for(int i = 0;i<5; i++){
 		for(int j =0; j<5;j++){
-			int x=(j*64)+(i*64)+(j*80);
+			dest.x=(j*64)+(i*64)+(j*80);
 			int d;
-			int y = (i * 64)+55;
+			dest.y = (i * 64)+55;
 			if(i%2==0){
 				d = 1;
 			}
 			else{
 				d= -1;
 			}
-    	log_obj[i][j] = new Log(log_text,this->renderer,x,y);
+	dest.w =64;
+	dest.h =64;
+    	log_obj[i][j] = new Log(log_text,this->renderer,dest);
     	log_obj[i][j]->setSpeed(1);
   		log_obj[i][j]->setDirection(d);
 		}

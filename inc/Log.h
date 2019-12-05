@@ -3,18 +3,7 @@
 
 class Log: public GameObject{
 public:
-	Log(SDL_Texture* tex, SDL_Renderer* ren, int x, int y): GameObject(tex,ren,x,y){
-	
-		 renderer=ren; 
-		object_texture=tex;
-		 x_position=x; 
-		 y_position=y;
-
-	destination_rect.w =64;
-
-	destination_rect.h = 64;
-	destination_rect.x = x_position;
-	destination_rect.y = y_position;
+	Log(SDL_Texture* tex, SDL_Renderer* ren,SDL_Rect dest): GameObject(tex,ren,dest){
 	};
 	void Update(double delta){
 	x_position += speed * direction;
