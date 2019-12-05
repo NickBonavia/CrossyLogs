@@ -10,19 +10,15 @@ public:
 		 x_position=x; 
 		 y_position=y;
 
-	source_rect.h =64;
-	source_rect.w =64;
-	destination_rect.w = source_rect.w;
+	destination_rect.w =64;
 
-	destination_rect.h = source_rect.h;
+	destination_rect.h = 64;
 	destination_rect.x = x_position;
 	destination_rect.y = y_position;
 	};
 	void Update(double delta){
 	x_position += speed * direction;
 	
-	source_rect.x =0;
-	source_rect.y =0;
 
 	if(direction > 0){
 		if(x_position > 800){

@@ -6,7 +6,7 @@ using std::cout;
 using std::endl;
 
 
-Log* log_obj[4][4];
+Log* log_obj[5][5];
 SDL_Rect Eground;//Ending ground
 SDL_Rect Sground;//Starting ground
 //SDL_Texture* frog_text;
@@ -26,11 +26,11 @@ void Game::LoadContent() {
     log_text = LoadTexture("assets/log.png",this->renderer);
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
-	for(int i = 0;i<4; i++){
-		for(int j =0; j<4;j++){
-			int x=(j*64)+(i*64)+(j*100);
+	for(int i = 0;i<5; i++){
+		for(int j =0; j<5;j++){
+			int x=(j*64)+(i*64)+(j*80);
 			int d;
-			int y = (i * 64)+64;
+			int y = (i * 64)+55;
 			if(i%2==0){
 				d = 1;
 			}
@@ -58,8 +58,8 @@ void Game::LoadContent() {
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
-	for(int i =0;i<4;i++){
-		for(int j =0; j<4;j++){
+	for(int i =0;i<5;i++){
+		for(int j =0; j<5;j++){
 	    	log_obj[i][j]->Update(delta);
 		}
 	}
@@ -85,8 +85,8 @@ void Game::Draw(double delta) {
 	SDL_RenderFillRect(renderer, &Sground);
 	SDL_RenderFillRect(renderer, &Eground);
     
-	for(int i =0;i<4;i++){
-		for(int j =0;j<4;j++){
+	for(int i =0;i<5;i++){
+		for(int j =0;j<5;j++){
     		log_obj[i][j]->Render();
 		}
 	}
