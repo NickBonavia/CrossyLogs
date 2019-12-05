@@ -7,7 +7,7 @@ private:
     int jump_dist;
 
 public:
-    Frog(SDL_Texture *tex, SDL_Renderer *rend, int x, int y, int jump_dist) : GameObject(tex, rend, x, y) {
+    Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist) : GameObject(tex, rend, dest) {
         
         this->jump_dist = jump_dist;
         destination_rect.w = 32;
