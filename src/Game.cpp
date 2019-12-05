@@ -1,16 +1,22 @@
 #include "Game.h"
 #include "Log.h"
+#include "Frog.h"
 #include <iostream>
 #include <string>
+#include <omp.h>
 using std::cout;
 using std::endl;
 
+//#define __PARALLEL__
 
 Log* log_obj[4][4];
+Frog *frog;
 SDL_Rect Eground;//Ending ground
 SDL_Rect Sground;//Starting ground
-//SDL_Texture* frog_text;
+SDL_Texture* frog_text;
 SDL_Texture* log_text;
+
+
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
 {
 	SDL_Surface* temp_surface = IMG_Load(file_name);
@@ -37,7 +43,7 @@ void Game::LoadContent() {
 			else{
 				d= -1;
 			}
-    	log_obj[i][j] = new Log(log_text,this->renderer,x,y);
+    	log_obj[i][j] = new Log(log_text, this->renderer, x, y, 1);
     	log_obj[i][j]->setSpeed(1);
   		log_obj[i][j]->setDirection(d);
 		}
@@ -58,11 +64,6 @@ void Game::LoadContent() {
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
-	for(int i =0;i<4;i++){
-		for(int j =0; j<4;j++){
-	    	log_obj[i][j]->Update(delta);
-		}
-	}
     SDL_Event event;
 
     // get events
@@ -75,6 +76,15 @@ void Game::Update(double delta) {
                 break;
         }
     }
+#ifdef __PARALLEL__
+#pragma omp parallel for num_threads(4) collapse(2)
+#endif
+	for(int i =0;i<4;i++){
+		for(int j =0; j<4;j++){
+	    	log_obj[i][j]->Update(delta);
+            cout << omp_get_thread_num() << endl;
+		}
+	}
 }
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
@@ -158,4 +168,3 @@ Game::~Game() {
         SDL_DestroyWindow(window);
     SDL_Quit();
 }
-
