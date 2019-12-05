@@ -32,8 +32,8 @@ void Game::LoadContent() {
     log_text = LoadTexture("assets/log.png",this->renderer);
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
-	for(int i = 0;i<4; i++){
-		for(int j =0; j<4;j++){
+	for(int i = 0;i<5; i++){
+		for(int j =0; j<5;j++){
 			dest.x=(j*64)+(i*64)+(j*80);
 			int d;
 			dest.y = (i * 64)+55;
@@ -46,7 +46,6 @@ void Game::LoadContent() {
 	dest.w =64;
 	dest.h =64;
     	log_obj[i][j] = new Log(log_text,this->renderer,dest);
-    	log_obj[i][j]->setSpeed(1);
   		log_obj[i][j]->setDirection(d);
 		}
 	}
@@ -66,11 +65,6 @@ void Game::LoadContent() {
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
-	for(int i =0;i<4;i++){
-		for(int j =0; j<4;j++){
-	    	log_obj[i][j]->Update(delta);
-		}
-	}
     SDL_Event event;
 
     // get events
@@ -86,8 +80,8 @@ void Game::Update(double delta) {
 #ifdef __PARALLEL__
 #pragma omp parallel for num_threads(4) collapse(2)
 #endif
-	for(int i =0;i<4;i++){
-		for(int j =0; j<4;j++){
+	for(int i =0;i<5;i++){
+		for(int j =0; j<5;j++){
 	    	log_obj[i][j]->Update(delta);
             cout << omp_get_thread_num() << endl;
 		}
@@ -102,8 +96,8 @@ void Game::Draw(double delta) {
 	SDL_RenderFillRect(renderer, &Sground);
 	SDL_RenderFillRect(renderer, &Eground);
     
-	for(int i = 0;i<4;i++){
-		for(int j = 0;j<4;j++){
+	for(int i = 0;i<5;i++){
+		for(int j = 0;j<5;j++){
     		log_obj[i][j]->Render();
 		}
 	}
