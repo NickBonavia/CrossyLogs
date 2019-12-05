@@ -65,8 +65,8 @@ void Game::LoadContent() {
     //Frog = new GameObject(frog_text,this.renderer, 100,50);
 
 	dest.x = 384;
-	dest.y = 350;
-	frog = new Frog(frog_text, this->renderer, dest, 55);
+	dest.y = 385;
+	frog = new Frog(frog_text, this->renderer, dest, 64);
 
 }
 void Game::Update(double delta) {
