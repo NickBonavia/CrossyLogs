@@ -7,10 +7,7 @@ public:
 	};
 
 	void Update(double delta){
-	x_position += speed * direction;
-	
-
-		x_position += speed * direction;
+	x_position += direction;
 
 		if(direction > 0){
 			if(x_position > 800){

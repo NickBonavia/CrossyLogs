@@ -32,8 +32,8 @@ void Game::LoadContent() {
     log_text = LoadTexture("assets/log.png",this->renderer);
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
-	for(int i = 0;i<5; i++){
-		for(int j =0; j<5;j++){
+	for(int i = 0;i<4; i++){
+		for(int j =0; j<4;j++){
 			dest.x=(j*64)+(i*64)+(j*80);
 			int d;
 			dest.y = (i * 64)+55;
@@ -66,8 +66,8 @@ void Game::LoadContent() {
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
-	for(int i =0;i<5;i++){
-		for(int j =0; j<5;j++){
+	for(int i =0;i<4;i++){
+		for(int j =0; j<4;j++){
 	    	log_obj[i][j]->Update(delta);
 		}
 	}
@@ -102,8 +102,8 @@ void Game::Draw(double delta) {
 	SDL_RenderFillRect(renderer, &Sground);
 	SDL_RenderFillRect(renderer, &Eground);
     
-	for(int i =0;i<5;i++){
-		for(int j =0;j<5;j++){
+	for(int i = 0;i<4;i++){
+		for(int j = 0;j<4;j++){
     		log_obj[i][j]->Render();
 		}
 	}
