@@ -13,9 +13,10 @@ Log* log_obj[5][5];
 SDL_Rect Eground;//Ending ground
 SDL_Rect Sground;//Starting ground
 SDL_Rect dest;
+Frog* frog;
 //SDL_Texture* frog_text;
 SDL_Texture* log_text;
-
+SDL_Texture* frog_text;
 
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
 {
@@ -30,6 +31,7 @@ void Game::LoadContent() {
     // To-do: Load content for game
   
     log_text = LoadTexture("assets/log.png",this->renderer);
+	frog_text = LoadTexture("assets/HornFrog.png", this->renderer);
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
 	for(int i = 0;i<5; i++){
@@ -62,6 +64,10 @@ void Game::LoadContent() {
 	Eground.h = 50;
     //Frog = new GameObject(frog_text,this.renderer, 100,50);
 
+	dest.x = 384;
+	dest.y = 350;
+	frog = new Frog(frog_text, this->renderer, dest, 55);
+
 }
 void Game::Update(double delta) {
     // To-do: Get input, update game world
@@ -75,17 +81,48 @@ void Game::Update(double delta) {
             case SDL_QUIT:
                 running = false;
                 break;
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym){
+					case SDLK_w:
+						frog->Move(-1);
+						break;
+					case SDLK_UP:
+						frog->Move(-1);
+						break;
+					case SDLK_s:
+						frog->Move(1);
+						break;
+					case SDLK_DOWN:
+						frog->Move(1);
+						break;
+					default:
+						break;
+				}
         }
     }
+
+	frog->Update(delta);
+
+	bool huh;
+
+	for(int k = 0; k < 5; k++){
+		for(int kk = 0; kk < 5; kk++){
+			huh = frog->Collision(&log_obj[k][kk]->destination_rect);
+			cout << huh << endl;
+		}
+	}
+
+
 #ifdef __PARALLEL__
 #pragma omp parallel for num_threads(4) collapse(2)
 #endif
 	for(int i =0;i<5;i++){
 		for(int j =0; j<5;j++){
 	    	log_obj[i][j]->Update(delta);
-            cout << omp_get_thread_num() << endl;
+            //cout << omp_get_thread_num() << endl;
 		}
 	}
+	//frog->Render();
 }
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
@@ -101,6 +138,7 @@ void Game::Draw(double delta) {
     		log_obj[i][j]->Render();
 		}
 	}
+	frog->Render();
 	SDL_SetRenderDrawColor(renderer, 0, 0, 205, 0);
     SDL_RenderPresent(renderer);
 }
