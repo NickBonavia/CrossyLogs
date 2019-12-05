@@ -3,16 +3,28 @@
 
 class Frog : public GameObject {
 private:
-    SDL_Rect *on_log = nullptr;
     int jump_dist;
+	SDL_Rect orginal;
 
 public:
+	SDL_Rect *on_log = nullptr;
+
     Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist) : GameObject(tex, rend, dest) {
         
         this->jump_dist = jump_dist;
         destination_rect.w = 32;
         destination_rect.h = 32;
+		orginal = dest;
     }
+
+	void Reset(){
+		on_log = nullptr;
+		destination_rect = orginal;
+		x_position = destination_rect.x;
+		y_position = destination_rect.y;
+		destination_rect.w = 32;
+        destination_rect.h = 32;
+	}
 
     void Update(double delta) {
         

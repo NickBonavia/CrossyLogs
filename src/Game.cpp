@@ -101,16 +101,23 @@ void Game::Update(double delta) {
         }
     }
 
-	frog->Update(delta);
-
-	bool huh;
+	bool huh = false;
 
 	for(int k = 0; k < 5; k++){
 		for(int kk = 0; kk < 5; kk++){
-			huh = frog->Collision(&log_obj[k][kk]->destination_rect);
-			cout << huh << endl;
+			if(!huh){
+				huh = frog->Collision(&log_obj[k][kk]->destination_rect);
+				cout << huh << endl;
+			}
 		}
 	}
+
+	if(!huh){
+		frog->Reset();
+		huh = true;
+	}
+
+	frog->Update(delta);
 
 
 #ifdef __PARALLEL__
