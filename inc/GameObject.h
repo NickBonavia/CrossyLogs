@@ -16,16 +16,13 @@ class GameObject{
 			SDL_RenderCopy(renderer,object_texture, nullptr, &destination_rect);
 		}
 		
-		GameObject(SDL_Texture* obj_text, SDL_Renderer* render, int x, int y)
+		GameObject(SDL_Texture* obj_text, SDL_Renderer* render,SDL_Rect dest)
 		{
 			renderer = render; 
 			object_texture = obj_text;
-			x_position = x; 
-			y_position = y;
-			destination_rect.x = x;
-			destination_rect.y = y;			
-			destination_rect.w = 64;
-			destination_rect.h = 64;
+			destination_rect = dest;
+			x_position = destination_rect.x; 
+			y_position = destination_rect.y;
 		}
 protected:
 		SDL_Renderer* renderer;

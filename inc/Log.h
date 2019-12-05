@@ -3,13 +3,12 @@
 
 class Log: public GameObject{
 public:
-	// Deleted default constructor
-	Log() = delete;
-	Log(SDL_Texture* tex, SDL_Renderer* ren, int x, int y, int speed) : GameObject(tex,ren,x,y){
-		this->speed = speed;
+	Log(SDL_Texture* tex, SDL_Renderer* ren,SDL_Rect dest): GameObject(tex,ren,dest){
 	};
 
 	void Update(double delta){
+	x_position += speed * direction;
+	
 
 		x_position += speed * direction;
 
