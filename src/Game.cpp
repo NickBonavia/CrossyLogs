@@ -17,6 +17,7 @@ Frog* frog;
 //SDL_Texture* frog_text;
 SDL_Texture* log_text;
 SDL_Texture* frog_text;
+SDL_Texture* jump_text;
 
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
 {
@@ -32,6 +33,7 @@ void Game::LoadContent() {
   
     log_text = LoadTexture("assets/log.png",this->renderer);
 	frog_text = LoadTexture("assets/HornFrog.png", this->renderer);
+	jump_text = LoadTexture("assets/HornFrogJump.png", this->renderer);
 
     //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
 	for(int i = 0;i<5; i++){
@@ -66,7 +68,7 @@ void Game::LoadContent() {
 
 	dest.x = 384;
 	dest.y = 385;
-	frog = new Frog(frog_text, this->renderer, dest, 64);
+	frog = new Frog(frog_text, this->renderer, dest, 64,jump_text);
 
 }
 void Game::Update(double delta) {
@@ -107,12 +109,11 @@ void Game::Update(double delta) {
 		for(int kk = 0; kk < 5; kk++){
 			if(!huh){
 				huh = frog->Collision(&log_obj[k][kk]->destination_rect);
-				cout << huh << endl;
+				//cout << huh << endl;
 			}
 		}
 	}
-
-	if(!huh){
+	if(!huh && frog->jump ==64){
 		frog->Reset();
 		huh = true;
 	}

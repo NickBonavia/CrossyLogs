@@ -4,17 +4,22 @@
 class Frog : public GameObject {
 private:
     int jump_dist;
+	int direction;
 	SDL_Rect orginal;
-
+	SDL_Texture *jump_tex, *tex;
+	
 public:
 	SDL_Rect *on_log = nullptr;
+	int jump =64;
 
-    Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist) : GameObject(tex, rend, dest) {
+    Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist, 		SDL_Texture *jump_tex) : GameObject(tex, rend, dest) {
         
         this->jump_dist = jump_dist;
         destination_rect.w = 32;
         destination_rect.h = 32;
 		orginal = dest;
+		this->jump_tex = jump_tex;
+		this->tex = tex;
     }
 
 	void Reset(){
@@ -27,17 +32,30 @@ public:
 	}
 
     void Update(double delta) {
-        
-        if (on_log != nullptr) {
-            x_position = on_log->x;
+        if(jump != 64){
+	jump +=4;
+	y_position += (4 * direction);
+	destination_rect.y = y_position;
+	} 
+	else 
+	{
+		this->object_texture = tex;
+		if (on_log != nullptr) 
+		{
+            		x_position = on_log->x;
 			destination_rect.x = x_position;
-        }
+        	}
+	}
     }
 
-    void Move(int direction) {
-
-        y_position += jump_dist * direction;
-        destination_rect.y = y_position;
+    void Move(int direct) {
+	if(jump ==64){
+	this->object_texture = jump_tex;
+	jump =0;
+	direction = direct;
+}
+       // y_position += jump_dist * direction;
+        //destination_rect.y = y_position;
     }
 
     bool Collision(SDL_Rect *log_rect) {
