@@ -11,6 +11,7 @@ private:
 public:
 	SDL_Rect *on_log = nullptr;
 	int jump =64;
+	int offset = 16;
 
     Frog(SDL_Texture *tex, SDL_Renderer *rend, SDL_Rect dest, int jump_dist, 		SDL_Texture *jump_tex) : GameObject(tex, rend, dest) {
         
@@ -60,7 +61,9 @@ public:
 
     bool Collision(SDL_Rect *log_rect) {
         if (SDL_HasIntersection(&this->destination_rect, log_rect)) {
+	#pragma omp critical
             on_log = log_rect;
+	on_log->x += 16;
             return true;
         }
         return false;

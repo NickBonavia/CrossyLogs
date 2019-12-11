@@ -7,7 +7,7 @@
 using std::cout;
 using std::endl;
 
-//#define __PARALLEL__
+#define __PARALLEL__
 
 Log* log_obj[5][5];
 SDL_Rect Eground;//Ending ground
@@ -105,17 +105,21 @@ void Game::Update(double delta) {
 
 	bool huh = false;
 
+#ifdef __PARALLEL__
+#pragma omp parallel for num_threads(4) collapse(2) reduction(||:huh)
+#endif
 	for(int k = 0; k < 5; k++){
 		for(int kk = 0; kk < 5; kk++){
 			if(!huh){
+			
 				huh = frog->Collision(&log_obj[k][kk]->destination_rect);
-				//cout << huh << endl;
+				cout << omp_get_thread_num() << endl;
 			}
 		}
 	}
 	if(!huh && frog->jump ==64){
 		frog->Reset();
-		huh = true;
+		//huh = true;
 	}
 
 	frog->Update(delta);
