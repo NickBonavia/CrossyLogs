@@ -3,7 +3,7 @@
 
 class Log: public GameObject{
 public:
-	Log(SDL_Texture* tex, SDL_Renderer* ren,SDL_Rect dest): GameObject(tex,ren,dest){
+	Log(SDL_Texture* tex, SDL_Renderer* ren, SDL_Rect dest): GameObject(tex,ren,dest){
 	};
 
 	void Update(double delta){

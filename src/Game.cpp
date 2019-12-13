@@ -10,22 +10,9 @@ using std::cout;
 using std::endl;
 
 #define __PARALLEL__
+//#define __UPDATE_ONLY__
 
-const int rows = 100000;
-const int cols = 6;
-const int NUM_THREADS = 16;
-
-int camera = 0;
-int upCount = 0;
-
-Log* log_obj[rows][cols];
-SDL_Rect Eground;//Ending ground
-SDL_Rect Sground;//Starting ground
-SDL_Rect dest;
-Frog* frog;
-SDL_Texture* log_text;
-SDL_Texture* frog_text;
-SDL_Texture* jump_text;
+const int COLS = 6;
 
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
 {
@@ -43,14 +30,14 @@ void Game::LoadContent() {
 	frog_text = LoadTexture("assets/HornFrog.png", this->renderer);
 	jump_text = LoadTexture("assets/HornFrogJump.png", this->renderer);
 
+	log_obj = new Log*[this->rows][COLS];
 
 	for(int i = 0; i < rows; i++){
-		for(int j = 0; j < cols; j++){
+		for(int j = 0; j < COLS; j++){
 			
 			dest.x = (j*64) + (j*80);
 			int d;
 			dest.y = 310 - (i * 64);
-			//dest.y = (i * 64) + 55;
 
 			if(i % 2 == 0){
 				d = 1;
@@ -74,7 +61,6 @@ void Game::LoadContent() {
 
 	Eground.x = 0;
 	Eground.y = 310 - (rows * 64);
-	//Eground.y = 0;
 	Eground.w = 800;
 	Eground.h = 50;
 
@@ -84,6 +70,7 @@ void Game::LoadContent() {
 
 }
 void Game::Update(double delta) {
+#ifndef __UPDATE_ONLY__
     // To-do: Get input, update game world
     SDL_Event event;
 
@@ -116,41 +103,39 @@ void Game::Update(double delta) {
     }
 	if ((upCount > 2) && (upCount < (rows - 2)) && (frog->jump != 64) && (frog->direction == -1))
 		camera -= 4;
-	if ((camera != 0) && (frog->jump != 64) && (frog->direction == 1))
+	if ((upCount < (rows - 2)) && (camera != 0) && (frog->jump != 64) && (frog->direction == 1))
 		camera += 4;
 
-	bool huh = false;
+	bool hit = false;
 
 //#ifdef __PARALLEL__
 //#pragma omp parallel for num_threads(NUM_THREADS) collapse(2) reduction(||:huh)
 //#endif
 	for(int k = 0; k < rows; k++){
-		for(int kk = 0; kk < cols; kk++){
-			if(!huh){
-			
-				huh = frog->Collision(&log_obj[k][kk]->destination_rect);
+		for(int kk = 0; kk < COLS; kk++){
+			if(!hit){
+				hit = frog->Collision(&log_obj[k][kk]->destination_rect);
 			}
 		}
 	}
-	if(!huh && (frog->jump == 64)){
+	if(!hit && (frog->jump == 64) && (upCount == 0)){
 		frog->Reset();
 		upCount = 0;
 		camera = 0;
 	}
 
 	frog->Update(delta);
-
+#endif
 	double startUp = omp_get_wtime();
 #ifdef __PARALLEL__
 #pragma omp parallel for num_threads(NUM_THREADS) collapse(2)
 #endif
 	for(int i =0;i<rows;i++){
-		for(int j =0; j<cols;j++){
+		for(int j =0; j < COLS;j++){
 	    	log_obj[i][j]->Update(delta);
 		}
 	}
 	double endUp = omp_get_wtime() - startUp;
-	printf("logs::Update took %f\n", endUp);
 }
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
@@ -166,7 +151,7 @@ void Game::Draw(double delta) {
 	SDL_RenderFillRect(renderer, &tmpGround);
     
 	for(int i = 0;i<rows;i++){
-		for(int j = 0;j<cols;j++){
+		for(int j = 0;j<COLS;j++){
     		log_obj[i][j]->Render(camera);
 		}
 	}
@@ -176,6 +161,18 @@ void Game::Draw(double delta) {
 }
 void Game::UnloadContent() {
     // To-do: Unload images and free memory
+	SDL_DestroyTexture(log_text);
+	SDL_DestroyTexture(frog_text);
+	SDL_DestroyTexture(jump_text);
+
+	for (int i = 0; i < this->rows; i++) {
+		for (int k = 0; k < COLS; k++) {
+			delete log_obj[i][k];
+		}
+	}
+	delete[] log_obj;
+
+	delete frog;
 }
 
 /*
@@ -190,9 +187,11 @@ bool Game::getStatus() {
 *
 *   This method handles initializing SDL2, and window/renderer creation
 */
-Game::Game(int winWidth, int winHeight) {
+Game::Game(int NUM_THREADS, int rows, int winWidth, int winHeight) {
 
     running = true;
+	this->NUM_THREADS = NUM_THREADS;
+	this->rows = rows;
 
     // Initialize video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
