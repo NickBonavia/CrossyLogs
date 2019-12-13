@@ -10,10 +10,12 @@ class GameObject{
 		SDL_Rect destination_rect;
 
 		virtual	~GameObject(){};
-		virtual void Update(double delta)=0;
-		void Render()
+		virtual void Update(double delta) = 0;
+		void Render(int cameraY)
 		{			
-			SDL_RenderCopy(renderer,object_texture, nullptr, &destination_rect);
+			SDL_Rect tmp = destination_rect;
+			tmp.y = tmp.y - cameraY;
+			SDL_RenderCopy(renderer,object_texture, nullptr, &tmp);
 		}
 		
 		GameObject(SDL_Texture* obj_text, SDL_Renderer* render,SDL_Rect dest)

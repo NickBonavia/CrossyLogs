@@ -8,20 +8,24 @@
 #include "Game.h"
 #include <SDL2/SDL.h>
 #include <omp.h>
+#include <cstdio>
 
 int main(int argc, char* argv[]) {
 
     Game crossyLogs = Game();
-    Uint32 delta = SDL_GetTicks();
 	
     while (crossyLogs.getStatus() == true) {
         
-        delta = SDL_GetTicks() - delta;
-        crossyLogs.Update(delta/1000.0);
-        crossyLogs.Draw(delta/1000.0);
+        Uint32 start = SDL_GetTicks();
+        crossyLogs.Update(1.0);
+        crossyLogs.Draw(1.0);
+        Uint32 delta = SDL_GetTicks() - start;
 
-        // Delay 10ms as not to use 100% CPU
-        SDL_Delay(10);
+        // Delay based on time to process frame
+        /*if (delta < 16) {
+            printf("Sleeping %ums\n", 16u - delta);
+            SDL_Delay(16u - delta);
+        }*/
     }
 
     return 0;

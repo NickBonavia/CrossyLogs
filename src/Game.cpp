@@ -4,17 +4,25 @@
 #include <iostream>
 #include <string>
 #include <omp.h>
+#include <cstdio>
+
 using std::cout;
 using std::endl;
 
 #define __PARALLEL__
 
-Log* log_obj[5][5];
+const int rows = 100000;
+const int cols = 6;
+const int NUM_THREADS = 16;
+
+int camera = 0;
+int upCount = 0;
+
+Log* log_obj[rows][cols];
 SDL_Rect Eground;//Ending ground
 SDL_Rect Sground;//Starting ground
 SDL_Rect dest;
 Frog* frog;
-//SDL_Texture* frog_text;
 SDL_Texture* log_text;
 SDL_Texture* frog_text;
 SDL_Texture* jump_text;
@@ -22,7 +30,7 @@ SDL_Texture* jump_text;
 SDL_Texture* Game::LoadTexture(const char* file_name, SDL_Renderer* render)
 {
 	SDL_Surface* temp_surface = IMG_Load(file_name);
-	SDL_Texture* texture =SDL_CreateTextureFromSurface(render, temp_surface);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(render, temp_surface);
 	SDL_FreeSurface(temp_surface);
 
 	return texture;
@@ -35,22 +43,26 @@ void Game::LoadContent() {
 	frog_text = LoadTexture("assets/HornFrog.png", this->renderer);
 	jump_text = LoadTexture("assets/HornFrogJump.png", this->renderer);
 
-    //frog_text = this->LoadTexture("assets/HornFrog.png",this.renderer);
-	for(int i = 0;i<5; i++){
-		for(int j =0; j<5;j++){
-			dest.x=(j*64)+(i*64)+(j*80);
+
+	for(int i = 0; i < rows; i++){
+		for(int j = 0; j < cols; j++){
+			
+			dest.x = (j*64) + (j*80);
 			int d;
-			dest.y = (i * 64)+55;
-			if(i%2==0){
+			dest.y = 310 - (i * 64);
+			//dest.y = (i * 64) + 55;
+
+			if(i % 2 == 0){
 				d = 1;
 			}
 			else{
 				d= -1;
 			}
-	dest.w =64;
-	dest.h =64;
-    	log_obj[i][j] = new Log(log_text,this->renderer,dest);
-  		log_obj[i][j]->setDirection(d);
+
+			dest.w = 60;
+			dest.h = 60;
+    		log_obj[i][j] = new Log(log_text, this->renderer, dest);
+  			log_obj[i][j]->setDirection(d);
 		}
 	}
 
@@ -61,10 +73,10 @@ void Game::LoadContent() {
 	Sground.h = 50;
 
 	Eground.x = 0;
-	Eground.y = 0;
+	Eground.y = 310 - (rows * 64);
+	//Eground.y = 0;
 	Eground.w = 800;
 	Eground.h = 50;
-    //Frog = new GameObject(frog_text,this.renderer, 100,50);
 
 	dest.x = 384;
 	dest.y = 385;
@@ -86,55 +98,59 @@ void Game::Update(double delta) {
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym){
 					case SDLK_w:
-						frog->Move(-1);
-						break;
 					case SDLK_UP:
 						frog->Move(-1);
+						if (frog->jump == 0)
+							upCount++;
 						break;
 					case SDLK_s:
-						frog->Move(1);
-						break;
 					case SDLK_DOWN:
 						frog->Move(1);
+						if (frog->jump == 0)
+							upCount--;
 						break;
 					default:
 						break;
 				}
         }
     }
+	if ((upCount > 2) && (upCount < (rows - 2)) && (frog->jump != 64) && (frog->direction == -1))
+		camera -= 4;
+	if ((camera != 0) && (frog->jump != 64) && (frog->direction == 1))
+		camera += 4;
 
 	bool huh = false;
 
-#ifdef __PARALLEL__
-#pragma omp parallel for num_threads(4) collapse(2) reduction(||:huh)
-#endif
-	for(int k = 0; k < 5; k++){
-		for(int kk = 0; kk < 5; kk++){
+//#ifdef __PARALLEL__
+//#pragma omp parallel for num_threads(NUM_THREADS) collapse(2) reduction(||:huh)
+//#endif
+	for(int k = 0; k < rows; k++){
+		for(int kk = 0; kk < cols; kk++){
 			if(!huh){
 			
 				huh = frog->Collision(&log_obj[k][kk]->destination_rect);
-				cout << omp_get_thread_num() << endl;
 			}
 		}
 	}
-	if(!huh && frog->jump ==64){
+	if(!huh && (frog->jump == 64)){
 		frog->Reset();
-		//huh = true;
+		upCount = 0;
+		camera = 0;
 	}
 
 	frog->Update(delta);
 
-
+	double startUp = omp_get_wtime();
 #ifdef __PARALLEL__
-#pragma omp parallel for num_threads(4) collapse(2)
+#pragma omp parallel for num_threads(NUM_THREADS) collapse(2)
 #endif
-	for(int i =0;i<5;i++){
-		for(int j =0; j<5;j++){
+	for(int i =0;i<rows;i++){
+		for(int j =0; j<cols;j++){
 	    	log_obj[i][j]->Update(delta);
-            //cout << omp_get_thread_num() << endl;
 		}
 	}
-	//frog->Render();
+	double endUp = omp_get_wtime() - startUp;
+	printf("logs::Update took %f\n", endUp);
 }
 void Game::Draw(double delta) {
     // To-do: Draw images to screen
@@ -142,15 +158,19 @@ void Game::Draw(double delta) {
 
 	SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0);
-	SDL_RenderFillRect(renderer, &Sground);
-	SDL_RenderFillRect(renderer, &Eground);
+	SDL_Rect tmpGround = Sground;
+	tmpGround.y -= camera;
+	SDL_RenderFillRect(renderer, &tmpGround);
+	tmpGround = Eground;
+	tmpGround.y -= camera;
+	SDL_RenderFillRect(renderer, &tmpGround);
     
-	for(int i = 0;i<5;i++){
-		for(int j = 0;j<5;j++){
-    		log_obj[i][j]->Render();
+	for(int i = 0;i<rows;i++){
+		for(int j = 0;j<cols;j++){
+    		log_obj[i][j]->Render(camera);
 		}
 	}
-	frog->Render();
+	frog->Render(camera);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 205, 0);
     SDL_RenderPresent(renderer);
 }
