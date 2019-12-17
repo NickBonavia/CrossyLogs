@@ -118,7 +118,7 @@ void Game::Update(double delta) {
 			}
 		}
 	}
-	if(!hit && (frog->jump == 64) && (upCount == 0)){
+	if(!hit && (frog->jump == 64)){
 		frog->Reset();
 		upCount = 0;
 		camera = 0;
